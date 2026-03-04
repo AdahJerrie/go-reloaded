@@ -5,44 +5,47 @@ import (
 	"strconv"
 )
 
-func ReplaceTaggedNumbers(input string) string {
+func ToDecimal(input string) string {
+	//give the regexp patterns for hex and bin
+	hexexp := regexp.MustCompile(`(?i)(\b[a-fA-F0-9]+)\s*\(hex\)`)
+	Binexp := regexp.MustCompile(`(?i)(\b[01]+)\s*\(hex\)`)
 
-	// Step 1: Create regex patterns
-	hexRe := regexp.MustCompile(`(?i)([0-9A-Fa-f]+)\s*\(hex\)`)
-	binRe := regexp.MustCompile(`(?i)([01]+)\s*\(bin\)`)
+	//extract all the hexexp matches from input and put in input
+	input = hexexp.ReplaceAllStringFunc(input, func(match string) string {
 
-	// Step 2: Replace HEX values
-	input = hexRe.ReplaceAllStringFunc(input, func(match string) string {
+		//extract the desired part from the match
+		part := hexexp.FindStringSubmatch(match)
 
-		// Extract the number part
-		parts := hexRe.FindStringSubmatch(match)
+		//Take only the part in the captured group
+		numbr := part[1]
 
-		// parts[1] is the number before (hex)
-		numberStr := parts[1]
-
-		// Convert hex → decimal
-		decimalValue, err := strconv.ParseInt(numberStr, 16, 64)
+		//parse the number for int conversion to decimal
+		hexconv, err := strconv.ParseInt(numbr, 16, 64)
 		if err != nil {
-			return match // if error, keep original
+			panic(err)
 		}
-
-		// Return decimal as string
-		return strconv.FormatInt(decimalValue, 10)
+		// return the decimal as string
+		return strconv.FormatInt(hexconv, 10)
 	})
+	//For the binary to decimal
+	//extract the bin from the string
+	input = Binexp.ReplaceAllStringFunc(input, func(match string) string {
 
-	// Step 3: Replace BINARY values
-	input = binRe.ReplaceAllStringFunc(input, func(match string) string {
+		//extract and narrow down the match to the captured group
+		parts := Binexp.FindStringSubmatch(match)
 
-		parts := binRe.FindStringSubmatch(match)
-		numberStr := parts[1]
+		//get the desired part containing the hexa number
+		numbr := parts[1]
 
-		decimalValue, err := strconv.ParseInt(numberStr, 2, 64)
+		//convert to decimal
+		Binconv, err := strconv.ParseInt(numbr, 16, 64)
 		if err != nil {
 			return match
 		}
 
-		return strconv.FormatInt(decimalValue, 10)
-	})
+		return strconv.FormatInt(Binconv, 10)
 
+	})
 	return input
+
 }
