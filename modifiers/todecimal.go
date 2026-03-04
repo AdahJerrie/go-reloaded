@@ -8,7 +8,7 @@ import (
 func ToDecimal(input string) string {
 	//give the regexp patterns for hex and bin
 	hexexp := regexp.MustCompile(`(?i)(\b[a-fA-F0-9]+)\s*\(hex\)`)
-	Binexp := regexp.MustCompile(`(?i)(\b[01]+)\s*\(hex\)`)
+	Binexp := regexp.MustCompile(`(?i)(\b[01]+)\s*\(bin\)`)
 
 	//extract all the hexexp matches from input and put in input
 	input = hexexp.ReplaceAllStringFunc(input, func(match string) string {
@@ -22,7 +22,7 @@ func ToDecimal(input string) string {
 		//parse the number for int conversion to decimal
 		hexconv, err := strconv.ParseInt(numbr, 16, 64)
 		if err != nil {
-			panic(err)
+			return match
 		}
 		// return the decimal as string
 		return strconv.FormatInt(hexconv, 10)
@@ -38,7 +38,7 @@ func ToDecimal(input string) string {
 		numbr := parts[1]
 
 		//convert to decimal
-		Binconv, err := strconv.ParseInt(numbr, 16, 64)
+		Binconv, err := strconv.ParseInt(numbr, 2, 64)
 		if err != nil {
 			return match
 		}
