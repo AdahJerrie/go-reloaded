@@ -1,32 +1,31 @@
 package modifiers
 
-import "strings"
+import (
+	"strings"
+)
 
 func TextCase(text string) string {
 	slice := strings.Fields(text)
-	var result []string
+	result := make([]string, 0, len(slice))
 
 	for i := 0; i < len(slice); i++ {
+		next := slice[i+1]
+		word := slice[i]
 
-		if i+1 < len(slice) && slice[i+1] == "(up)" {
-			slice[i] = strings.ToUpper(slice[i])
-			result = append(result, slice[i])
-			i++
+		switch next {
+		case "(up)":
+			word = strings.ToUpper(word)
+		case "(low)":
+			word = strings.ToLower(word)
+		case "(cap)":
+			word = strings.ToUpper(word[:1]) + strings.ToLower(word[1:])
+		default:
+			result = append(result, word)
 			continue
 		}
-		if i+1 < len(slice) && slice[i+1] == "(low)" {
-			slice[i] = strings.ToLower(slice[i])
-			result = append(result, slice[i])
-			i++
-			continue
-		}
-		if i+1 < len(slice) && slice[i+1] == "(cap)" {
-			slice[i] = strings.ToUpper(slice[i][0:1]) + strings.ToLower(slice[i][1:])
-			result = append(result, slice[i])
-			i++
-			continue
-		}
-		result = append(result, slice[i])
+		result = append(result, word)
+		i++
+		continue
 	}
 	return strings.Join(result, " ")
 }

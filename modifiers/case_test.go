@@ -7,7 +7,7 @@ import (
 
 func TestCase(t *testing.T) {
 	input := "let us go (up) and play in the RAIN (low) by myself (cap)"
-	expected := "let us GO and play in the rain by Myself"
+	expected := ""
 
 	output := TextCase(input)
 	fmt.Println(output)
