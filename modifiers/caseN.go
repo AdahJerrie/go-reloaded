@@ -1,52 +1,42 @@
-package main 
+package main
 
 import (
-	"strings"
 	"fmt"
 	"strconv"
-	"log"
+	"strings"
 )
 
-func CommandN(text string) string {
-	slice := strings.Fields(text)
-	result := make([]string, 0, len(slice))
-
-	for i := 0; i < len(slice); i++{
-		mark := slice[i]
-		if strings.HasPrefix(mark, "(up,") {
-			var num string 
-			if strings.HasSuffix(mark, ")") {
-				num = strings.TrimPrefix(strings.TrimSuffix(mark, ")"), "(up,")
-				//result = append(result, slice[i])
-				continue
-			}
-			if i+1 < len(slice) {
-				num = strings.TrimSuffix(slice[i+1], ")")
-				//result = append(result, slice[:i], slice[i+2:])
-				continue
-			}
-			count,err := strconv.Atoi(num)
-			if err != nil {
-				log.Fatal()
-			}
-
-			start := i - count +1
-			if start <0 {
-				start = 0
-			}
-
-			for j := start; j<=i; j++ {
-				slice[j] = strings.ToUpper(slice[j])
-				result = append(result, slice[j])
-				continue
-			}
-
-		}
-		result = append(result, slice[i])
-	}
-	return strings.Join(result, " ")
+func main() {
+	fmt.Println(CommandN("let it rain (up,2) today"))
 }
 
-func main() {
-	fmt.Println(CommandN("let it rain (up, 2)"))
+func CommandN(text string) string {
+	field := strings.Fields(text)
+	result := make([]string, 0, len(field))
+
+	for i := 0; i < len(field); i++ {
+		if strings.HasPrefix(field[i], "(up,") && strings.HasSuffix(field[i], ")") {
+			numStr := strings.TrimPrefix(strings.TrimSuffix(field[i], ")"), "(up,")
+
+			// if i+1 < len(field) && strings.HasSuffix(field[i+1], ")") {
+			// 	numStr = strings.TrimSuffix(field[i+1], ")")
+			// 	result = append(result, field[i])
+			// 	i++
+			// 	continue
+			// }
+			count, err := strconv.Atoi(numStr)
+			if err != nil {
+				result = append(result, field[i])
+				continue
+			}
+
+			for j := len(result) - count; j < len(result); j++ {
+				result[j] = strings.ToUpper(result[j])
+				//result = append(result, field[j])
+			}
+			continue
+		}
+		result = append(result, field[i])
+	}
+	return strings.Join(result, " ")
 }
