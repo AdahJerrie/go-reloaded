@@ -15,24 +15,31 @@ func CommandN(text string) string {
 	result := make([]string, 0, len(field))
 
 	for i := 0; i < len(field); i++ {
-		if strings.HasPrefix(field[i], "(up,") && strings.HasSuffix(field[i], ")") {
-			numStr := strings.TrimPrefix(strings.TrimSuffix(field[i], ")"), "(up,")
+		//detect (up,n)
+		if strings.HasPrefix(field[i], "(up,") {
+			numStr := strings.TrimPrefix(field[i], "(up,")
 
-			// if i+1 < len(field) && strings.HasSuffix(field[i+1], ")") {
-			// 	numStr = strings.TrimSuffix(field[i+1], ")")
-			// 	result = append(result, field[i])
-			// 	i++
-			// 	continue
-			// }
+			//handle "(up," "n)"
+			if i+1 < len(field) && !strings.HasSuffix(numStr, ")") {
+				numStr = field[i+1]
+				i++
+
+			}
+			numStr = strings.TrimSuffix(numStr, ")")
+
 			count, err := strconv.Atoi(numStr)
 			if err != nil {
 				result = append(result, field[i])
 				continue
 			}
 
-			for j := len(result) - count; j < len(result); j++ {
+			start := len(result) - count
+			if start < 0 {
+				start = 0
+			}
+
+			for j := start; j < len(result); j++ {
 				result[j] = strings.ToUpper(result[j])
-				//result = append(result, field[j])
 			}
 			continue
 		}
