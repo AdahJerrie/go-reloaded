@@ -94,7 +94,3 @@ func CommandN(input string) string {
 	}
 	return strings.Join(field, " ")
 }
-
-func main() {
-	fmt.Println(CommandN("let IT RAIN (low, 2) today"))
-}
