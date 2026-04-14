@@ -1,7 +1,6 @@
-package main
+package modifiers
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -31,8 +30,4 @@ func TextCase(text string) string {
 		continue
 	}
 	return strings.Join(result, " ")
-}
-
-func main() {
-	fmt.Println(TextCase("let it rain (up) again today"))
 }
