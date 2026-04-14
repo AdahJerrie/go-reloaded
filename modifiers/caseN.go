@@ -6,44 +6,41 @@ import (
 	"strings"
 )
 
-func main() {
-	fmt.Println(CommandN("let it rain (up,2) today"))
-}
-
-func CommandN(text string) string {
-	field := strings.Fields(text)
-	result := make([]string, 0, len(field))
+func CommandN(input string) string {
+	field := strings.Fields(input)
 
 	for i := 0; i < len(field); i++ {
-		//detect (up,n)
 		if strings.HasPrefix(field[i], "(up,") {
-			numStr := strings.TrimPrefix(field[i], "(up,")
-
-			//handle "(up," "n)"
-			if i+1 < len(field) && !strings.HasSuffix(numStr, ")") {
-				numStr = field[i+1]
-				i++
-
+			var num string
+			if strings.HasSuffix(field[i], ")") {
+				num = strings.TrimPrefix(strings.TrimSuffix(field[i], ")"), "(up,")
+				field = append(field[:i], field[i+1:]...)
+				i--
 			}
-			numStr = strings.TrimSuffix(numStr, ")")
-
-			count, err := strconv.Atoi(numStr)
+			if i+1 < len(field) && strings.HasSuffix(field[i+1], ")") {
+				num = strings.TrimSuffix(field[i+1], ")")
+				field = append(field[:i], field[i+2:]...)
+				i--
+			}
+			count, err := strconv.Atoi(num)
 			if err != nil {
-				result = append(result, field[i])
+				fmt.Println("Error converting")
 				continue
 			}
 
-			start := len(result) - count
+			start := i - count + 1
 			if start < 0 {
 				start = 0
 			}
 
-			for j := start; j < len(result); j++ {
-				result[j] = strings.ToUpper(result[j])
+			for j := start; j <= i; j++ {
+				field[j] = strings.ToUpper(field[j])
 			}
-			continue
 		}
-		result = append(result, field[i])
 	}
-	return strings.Join(result, " ")
+	return strings.Join(field, " ")
+}
+
+func main() {
+	fmt.Println(CommandN("let it rain (up,2) today"))
 }
